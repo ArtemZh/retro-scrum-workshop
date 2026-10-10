@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="uk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ретро воркшопу «Робота зі Scrum» — аналіз і поради</title>
+<meta name="description" content="Аналіз ретроспективи двох команд воркшопу зі Scrum: що спрацювало, що заважало, поради за Scrum Guide і PMBOK 8, методи та персональні побажання.">
+<style>
+:root{
+  --bg:#f5f2ea; --card:#fffdf8; --ink:#1e1c27; --mute:#6b6878; --line:#e3ddd0;
+  --t1:#0b8a7e; --t2:#d4502a; --acc:var(--t1); --acc-soft:#0b8a7e1c;
+  --good:#2e9e5b; --bad:#d0483e; --idea:#c98a12; --kudos:#7a55d6;
+  --note-good:#dff3e3; --note-bad:#fde0dc; --note-idea:#fdf0c8;
+  --shadow:0 1px 2px #0000000d,0 8px 24px #0000000f;
+  --r:18px;
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#131219; --card:#1d1b26; --ink:#eeeaf6; --mute:#a09cb0; --line:#2f2c3b;
+    --t1:#35c7b8; --t2:#ff7d55; --acc-soft:#35c7b822;
+    --note-good:#1d3a2a; --note-bad:#44211f; --note-idea:#42360f;
+    --shadow:0 1px 2px #0006,0 10px 30px #0005;
+  }
+}
+body[data-team="2"]{--acc:var(--t2); --acc-soft:color-mix(in srgb,var(--t2) 14%,transparent)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;overflow-x:clip}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+.wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+h1,h2,h3{line-height:1.15;margin:0;letter-spacing:-.02em}
+h1{font-size:clamp(34px,6vw,64px);font-weight:800}
+h2{font-size:clamp(26px,3.6vw,38px);font-weight:800}
+h3{font-size:19px}
+p{margin:0}
+.kicker{font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--acc);transition:color .4s}
+.lead{color:var(--mute);font-size:18px;max-width:62ch}
+section{padding:64px 0}
+.sec-head{display:grid;gap:10px;margin-bottom:28px}
+
+/* hero */
+.hero{padding:72px 0 40px;position:relative}
+.hero h1 span{background:linear-gradient(100deg,var(--t1),var(--t2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.blob{position:absolute;border-radius:50%;filter:blur(70px);opacity:.28;z-index:-1;animation:float 14s ease-in-out infinite}
+.blob.a{width:360px;height:360px;background:var(--t1);top:-80px;right:-60px}
+.blob.b{width:300px;height:300px;background:var(--t2);top:160px;left:-120px;animation-delay:-6s}
+@keyframes float{50%{transform:translate(24px,30px) scale(1.08)}}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:36px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--shadow);transition:transform .25s}
+.stat:hover{transform:translateY(-4px)}
+.stat b{display:block;font-size:36px;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.stat span{color:var(--mute);font-size:14px}
+
+/* switcher */
+.switch-bar{position:sticky;top:0;z-index:20;padding:12px 0;background:color-mix(in srgb,var(--bg) 82%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.switch-in{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.seg{position:relative;display:inline-grid;grid-template-columns:1fr 1fr;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:4px}
+.seg button{position:relative;z-index:1;border:0;background:none;color:var(--mute);font:inherit;font-weight:700;padding:9px 22px;border-radius:999px;cursor:pointer;transition:color .3s}
+.seg button[aria-pressed="true"]{color:#fff}
+.seg i{position:absolute;top:4px;bottom:4px;left:4px;width:calc(50% - 4px);border-radius:999px;background:var(--acc);transition:transform .45s cubic-bezier(.6,1.5,.4,1),background .4s}
+body[data-team="2"] .seg i{transform:translateX(100%)}
+.nav{display:flex;gap:16px;font-size:14px;flex-wrap:wrap}
+.nav a{color:var(--mute);text-decoration:none;position:relative}
+.nav a::after{content:"";position:absolute;left:0;right:100%;bottom:-3px;height:2px;background:var(--acc);transition:right .25s}
+.nav a:hover{color:var(--ink)} .nav a:hover::after{right:0}
+
+/* team portrait */
+.portrait{display:grid;grid-template-columns:1.05fr 1fr;gap:28px;align-items:center}
+.pic{position:relative;aspect-ratio:3/2;border-radius:24px;overflow:hidden;background:var(--acc-soft);border:1px solid var(--line);box-shadow:var(--shadow)}
+.pic img,.pic svg{width:100%;height:100%;object-fit:cover;display:block;transition:transform .8s cubic-bezier(.2,.7,.2,1)}
+.pic:hover img{transform:scale(1.04)}
+.pic figcaption{position:absolute;left:12px;bottom:12px;background:#000a;color:#fff;font-size:12px;padding:5px 10px;border-radius:999px;backdrop-filter:blur(6px)}
+figure{margin:0}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.tag{font-size:13px;font-weight:600;padding:6px 12px;border-radius:999px;background:var(--acc-soft);color:var(--acc);transition:background .4s,color .4s}
+.verdict{margin-top:18px;padding:16px 18px;border-left:4px solid var(--acc);background:var(--card);border-radius:0 14px 14px 0;transition:border-color .4s}
+.swap{animation:swap .5s both}
+@keyframes swap{from{opacity:0;transform:translateY(14px)}}
+
+/* board */
+.board{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.col h3{display:flex;align-items:center;gap:8px;margin-bottom:12px}
+.col h3 small{margin-left:auto;font-size:13px;color:var(--mute);font-weight:600}
+.notes{display:grid;gap:10px}
+.note{padding:12px 14px;border-radius:4px 14px 14px 14px;font-size:15px;box-shadow:0 2px 0 #0000000f;transform:rotate(var(--rot,0deg));transition:transform .25s cubic-bezier(.3,1.6,.5,1),box-shadow .25s;cursor:default;position:relative}
+.note:hover{transform:rotate(0) translateY(-4px) scale(1.02);box-shadow:0 12px 22px #00000020;z-index:2}
+.note em{display:block;font-style:normal;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.6;margin-bottom:2px}
+.note.g{background:var(--note-good)} .note.b{background:var(--note-bad)} .note.i{background:var(--note-idea)}
+.note .vote{position:absolute;top:-8px;right:-6px;background:var(--card);border:1px solid var(--line);border-radius:999px;font-size:12px;padding:1px 7px}
+
+/* bars */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:22px;box-shadow:var(--shadow)}
+.bars{display:grid;gap:12px;margin-top:16px}
+.bar{display:grid;grid-template-columns:150px 1fr 26px;gap:10px;align-items:center;font-size:14px}
+.bar .track{height:12px;border-radius:999px;background:var(--line);overflow:hidden}
+.bar .fill{height:100%;width:0;border-radius:999px;transition:width 1s cubic-bezier(.2,.8,.2,1)}
+.bar b{text-align:right;font-variant-numeric:tabular-nums}
+.kudos-wall{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.kd{border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit;font-size:14px;border-radius:999px;padding:7px 12px;cursor:pointer;transition:transform .2s,border-color .2s}
+.kd:hover{transform:translateY(-2px) rotate(-2deg);border-color:var(--kudos)}
+.kd:active{transform:scale(.92)}
+.kd.txt{border-radius:14px;text-align:left;background:color-mix(in srgb,var(--kudos) 12%,var(--card))}
+.pop{position:fixed;pointer-events:none;font-size:22px;animation:pop 900ms ease-out forwards;z-index:50}
+@keyframes pop{to{transform:translate(var(--dx),var(--dy)) rotate(var(--dr)) scale(.4);opacity:0}}
+
+/* actions audit */
+.audit{display:grid;gap:14px}
+.act{display:grid;grid-template-columns:1fr 34px 1fr;gap:12px;align-items:stretch}
+.act>div{border-radius:14px;padding:14px 16px;border:1px solid var(--line);background:var(--card)}
+.act .was{opacity:.85}
+.act .now{border-color:var(--acc);background:var(--acc-soft);transition:border-color .4s,background .4s}
+.act .arrow{border:0;background:none;display:grid;place-items:center;font-size:22px;color:var(--acc);padding:0;animation:nudge 1.8s ease-in-out infinite}
+@keyframes nudge{50%{transform:translateX(5px)}}
+.act small{display:block;font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--mute);margin-bottom:4px}
+.meta{font-size:13px;color:var(--mute);margin-top:6px}
+.flag{display:inline-block;font-size:12px;font-weight:700;color:var(--bad);margin-top:6px}
+
+/* advice */
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px}
+.chip{border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-size:14px;font-weight:600;padding:8px 14px;border-radius:999px;cursor:pointer;transition:all .2s}
+.chip:hover{transform:translateY(-2px)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.advice{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.adv{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);overflow:hidden;transition:transform .25s,opacity .3s,border-color .25s}
+.adv:hover{transform:translateY(-3px);border-color:var(--acc)}
+.adv.hide{display:none}
+.adv button{all:unset;box-sizing:border-box;display:grid;grid-template-columns:1fr 24px;gap:10px;width:100%;padding:18px 20px;cursor:pointer}
+.adv button:focus-visible{outline:2px solid var(--acc);outline-offset:-2px}
+.src{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase}
+.src.scrum{color:#2f7fd6} .src.pmbok{color:#b8563a} .src.method{color:var(--kudos)}
+.adv h3{margin-top:4px;font-size:18px}
+.who{font-size:12px;color:var(--mute);margin-top:6px}
+.plus{font-size:22px;line-height:1;color:var(--mute);transition:transform .35s cubic-bezier(.4,1.6,.5,1)}
+.adv.open .plus{transform:rotate(135deg);color:var(--acc)}
+.body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .4s ease}
+.adv.open .body{grid-template-rows:1fr}
+.body>div{overflow:hidden}
+.body dl{margin:0;padding:0 20px 20px;display:grid;gap:10px;font-size:15px}
+.body dt{font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--mute)}
+.body dd{margin:2px 0 0}
+
+/* methods */
+.methods{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.m{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:18px;transition:transform .3s,box-shadow .3s}
+.m:hover{transform:translateY(-5px) rotate(-.6deg);box-shadow:var(--shadow)}
+.m .ico{font-size:28px;display:inline-block;transition:transform .4s cubic-bezier(.4,1.8,.5,1)}
+.m:hover .ico{transform:scale(1.25) rotate(8deg)}
+.m h3{margin:8px 0 6px;font-size:17px}
+.m p{font-size:14.5px;color:var(--mute)}
+.m ol{margin:8px 0 0;padding-left:18px;font-size:14px}
+
+/* agenda */
+.agenda{display:flex;border-radius:14px;overflow:hidden;margin-top:16px;height:54px;border:1px solid var(--line)}
+.agenda div{display:grid;place-items:center;font-size:12px;font-weight:700;color:#fff;text-align:center;padding:0 4px;transform-origin:left;transform:scaleX(0);transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+.in .agenda div{transform:none}
+.legend{display:grid;grid-template-columns:repeat(2,1fr);gap:6px 18px;margin-top:14px;font-size:14px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:8px}
+
+/* wishes */
+.wishes{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.flip{perspective:1200px;height:250px;cursor:pointer;border:0;background:none;padding:0;font:inherit;color:inherit;text-align:left}
+.flip .in3{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.3,1.3,.5,1)}
+.flip.on .in3{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:var(--r);padding:20px;border:1px solid var(--line);box-shadow:var(--shadow);display:flex;flex-direction:column}
+.front{background:linear-gradient(140deg,var(--acc),color-mix(in srgb,var(--acc) 55%,#7a55d6));color:#fff;justify-content:space-between;transition:background .4s}
+.front .emo{font-size:46px;transition:transform .4s cubic-bezier(.4,1.8,.5,1)}
+.flip:hover .front .emo{transform:translateY(-6px) rotate(-8deg) scale(1.1)}
+.front b{font-size:21px} .front span{font-size:13px;opacity:.85}
+.back{background:var(--card);transform:rotateY(180deg);font-size:14.5px;justify-content:center;gap:8px;overflow:auto}
+.back b{color:var(--acc)}
+
+.rv{opacity:0;transform:translateY(22px);transition:opacity .7s,transform .7s cubic-bezier(.2,.8,.2,1)}
+.rv.in{opacity:1;transform:none}
+footer{padding:40px 0 70px;color:var(--mute);font-size:14px;border-top:1px solid var(--line)}
+footer a{color:var(--acc)}
+@media (max-width:860px){
+  .stats{grid-template-columns:repeat(2,1fr)} .portrait,.two,.board,.advice{grid-template-columns:1fr}
+  .methods,.wishes{grid-template-columns:1fr 1fr} .act{grid-template-columns:1fr} .act .arrow{transform:rotate(90deg);animation:none}
+  .nav{display:none}
+}
+@media (max-width:540px){.methods,.wishes{grid-template-columns:1fr} .bar{grid-template-columns:110px 1fr 22px} section{padding:44px 0}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important} .rv{opacity:1;transform:none}}
+</style>
+</head>
+<body data-team="1">
+
+<header class="hero wrap">
+  <div class="blob a"></div><div class="blob b"></div>
+  <p class="kicker">DAO PM UA 027 · Workshop p.4 · Робота зі Scrum</p>
+  <h1 style="margin:14px 0 18px">Що нам сказала <span>ретроспектива</span></h1>
+  <p class="lead">Дві команди вперше пройшли планування спринту з Planning Poker і роботою в Jira. Нижче — що спрацювало, що заважало, і що з цим робити за Scrum Guide та PMBOK&nbsp;8.</p>
+  <div class="stats">
+    <div class="stat"><b data-count="37">0</b><span>нотаток на дошках</span></div>
+    <div class="stat"><b data-count="21">0</b><span>подяк на Wall of Kudos</span></div>
+    <div class="stat"><b data-count="5">0</b><span>дій (Actions) на дві команди</span></div>
+    <div class="stat"><b data-count="3">0</b><span>дії з п'яти віддано адміністратору курсу</span></div>
+  </div>
+</header>
+
+<div class="switch-bar">
+  <div class="wrap switch-in">
+    <div class="seg" role="group" aria-label="Команда">
+      <i></i>
+      <button data-team="1" aria-pressed="true">Команда 1</button>
+      <button data-team="2" aria-pressed="false">Команда 2</button>
+    </div>
+    <nav class="nav">
+      <a href="#portrait">Портрет</a><a href="#board">Дошка</a><a href="#actions">Actions</a>
+      <a href="#advice">Поради</a><a href="#methods">Методи</a><a href="#wishes">Побажання</a>
+    </nav>
+  </div>
+</div>
+
+<main class="wrap">
+
+<section id="portrait">
+  <div class="portrait rv" id="portraitBox"></div>
+</section>
+
+<section id="board">
+  <div class="sec-head rv">
+    <p class="kicker">Дошка ретро</p>
+    <h2>Що писали учасники</h2>
+    <p class="lead">Нотатки дослівно, згруповані за темами. Наведіть курсор — картка «підніметься».</p>
+  </div>
+  <div class="board rv" id="boardBox"></div>
+  <div class="two" style="margin-top:22px">
+    <div class="card rv"><h3>Теми за кількістю нотаток</h3><div class="bars" id="barsBox"></div></div>
+    <div class="card rv"><h3>Wall of Kudos 👏</h3><p class="meta" id="kudosMeta"></p><div class="kudos-wall" id="kudosBox"></div></div>
+  </div>
+</section>
+
+<section id="actions">
+  <div class="sec-head rv">
+    <p class="kicker">Аудит дій</p>
+    <h2>Actions: як записали і як краще</h2>
+    <p class="lead">Scrum Guide: на ретроспективі Scrum Team сама визначає найкорисніші зміни для власної ефективності. Тому в кожної дії має бути власник усередині команди, конкретний результат і дата.</p>
+  </div>
+  <div class="audit rv" id="auditBox"></div>
+</section>
+
+<section id="common">
+  <div class="sec-head rv">
+    <p class="kicker">Обидві команди</p>
+    <h2>Три спільні корені</h2>
+  </div>
+  <div class="methods rv">
+    <div class="m"><span class="ico">⏱️</span><h3>Час з'їла не оцінка, а відсутність рамок</h3><p>6 із 12 «мінусів» — про час. Команда 1 довго оцінювала, Команда 2 довго обговорювала вступ. В обох випадках не було таймбоксів усередині події.</p></div>
+    <div class="m"><span class="ico">🧭</span><h3>Старт без підготовки</h3><p>Продукт, ролі, інструмент (Jira, Planning Poker, ШІ) — усе з'ясовувалося вже на воркшопі. Це робота до події, а не на ній.</p></div>
+    <div class="m"><span class="ico">🎭</span><h3>Розмиті ролі</h3><p>Команда 2 пише про це прямо («влізали в роботу СМ»). Команда 1 — непрямо: один учасник пояснював і контролював роботу крок за кроком.</p></div>
+  </div>
+</section>
+
+<section id="advice">
+  <div class="sec-head rv">
+    <p class="kicker">Поради</p>
+    <h2>Що кажуть Scrum Guide і PMBOK&nbsp;8</h2>
+    <p class="lead">Кожна картка: що побачили в ретро → що каже джерело → що зробити. Картки, важливі для обраної команди, йдуть першими.</p>
+  </div>
+  <div class="chips rv" id="chips">
+    <button class="chip" data-f="all" aria-pressed="true">Усі</button>
+    <button class="chip" data-f="scrum" aria-pressed="false">Scrum Guide 2020</button>
+    <button class="chip" data-f="pmbok" aria-pressed="false">PMBOK 8</button>
+  </div>
+  <div class="advice" id="adviceBox"></div>
+</section>
+
+<section id="methods">
+  <div class="sec-head rv">
+    <p class="kicker">Методи</p>
+    <h2>Техніки на наступний воркшоп</h2>
+  </div>
+  <div class="methods rv" id="methodsBox"></div>
+  <div class="card rv" style="margin-top:20px">
+    <h3>Приклад адженди планування на 60 хвилин</h3>
+    <p class="meta">Обидві команди просили більше часу. Часу більше не стане — але його можна розкласти. Структура «Навіщо → Що → Як» узята зі Sprint Planning у Scrum Guide.</p>
+    <div class="agenda" id="agenda"></div>
+    <div class="legend" id="legend"></div>
+  </div>
+</section>
+
+<section id="wishes">
+  <div class="sec-head rv">
+    <p class="kicker">Особисто</p>
+    <h2>Побажання кожному</h2>
+    <p class="lead">Натисніть картку, щоб перевернути. На дошці учасники знеособлені, тому картки підписані номерами.</p>
+  </div>
+  <div class="wishes rv" id="wishBox"></div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><b>Джерела.</b> The Scrum Guide (Schwaber, Sutherland, 2020) — <a href="https://scrumguides.org/scrum-guide.html">scrumguides.org</a>. PMBOK® Guide, 8-ме видання (PMI, 2025): принципи та домени діяльності наведено у вільному перекладі з англійськими назвами. Planning Poker, Definition of Ready, робочі угоди — доповнювальні практики, у Scrum Guide їх немає.</p>
+    <p style="margin-top:8px">Дані: експорт дошок ретроспективи двох команд. Ілюстрації згенеровано в ChatGPT.</p>
+  </div>
+</footer>
+
+<script>
+// Щоб підписати картки іменами, впишіть їх сюди: {1:{1:"Олена",2:"Саша"},2:{...}}
+const NAMES={1:{},2:{}};
+
+const T={
+1:{
+  name:"Команда 1", title:"Першовідкривачі", img:"assets/team1.jpg",
+  sum:"Команда, якій було цікаво. Майже половина плюсів — про новий досвід: Planning Poker, ролі, сам формат. Мінуси — про складність старту й час на оцінку.",
+  tags:["новий досвід","Planning Poker","взаємодопомога","складний старт"],
+  verdict:"<b>Головний висновок.</b> Команді бракувало не часу, а точки опори: еталонної задачі для оцінки й зрозумілого плану дій. Обидві дії віддано адміністратору курсу — власних зобов'язань команда не взяла.",
+  good:[["Щось нове","новий досвід"],["Щось нове","знайомство з PP"],["Щось нове","новий досвід"],["Щось нове","новий досвід у Planning Poker"],["Організація","Можливість займати різні ролі в команді"],["Організація","Невелика кількість обмежень"],["Організація","Розділення на команди"],["Команда","робота в команді"],["Команда","Класна командна робота"]],
+  bad:[["Труднощі","було складно відразу оцінювати складність задач"],["Труднощі","було складно на початку зрозуміти план дій"],["Час","Багато часу на оцінку"],["Час","без AI зробити дуже важко"],["Час","Хотілося б більше часу"],["Час","мало часу для першого завдання такого плану"]],
+  idea:[["","Вибір теми до планування"],["","до Workshop знати завдання, щоб можна було підготуватися"],["","спробувати попрацювати в Jira до воркшопу"]],
+  bars:[["Новий досвід",4,"good"],["Час",4,"bad"],["Організація",3,"good"],["Підготовка заздалегідь",3,"idea"],["Команда",2,"good"],["Складність старту",2,"bad"]],
+  kudos:["Саша дуже допомагав, пояснював деякі завдання та контролював роботу Step by Step","Дякую Саші за допомогу та додаткові пояснення"],
+  kudosN:[["Учасник 2",5],["Учасник 3",2],["Учасник 1",1],["Учасник 4",1],["Учасник 5",1],["Учасник 6",1]],
+  kudosMeta:"11 карток. 5 з них — навпроти одного номера, і обидві підписані подяки — Саші. Це чудово для атмосфери і водночас сигнал: знання в команді тримається на одній людині.",
+  acts:[
+    {was:"Розділити людей на команди до воркшопу, щоб вони обрали продукт і розподілили ролі.",own:"Адміністратор курсу",due:"Наступний воркшоп",flag:"Власник поза командою",
+     now:"За 2 дні до воркшопу команда в чаті обирає продукт і розподіляє ролі (PO, SM, Developers). Результат — одне повідомлення з продуктом і ролями.",nown:"Scrum Master команди",ndue:"за 2 дні до воркшопу"},
+    {was:"Надати інструкцію для ШІ, щоб усі могли користуватися ним на воркшопі.",own:"Адміністратор курсу",due:"Наступний воркшоп",flag:"Власник поза командою",
+     now:"Зібрати 3–5 перевірених промптів (розбити епік на історії, написати критерії приймання, запропонувати еталонну задачу) і викласти в спільний документ. Прохання до адміністратора — окремим запитом, а не дією команди.",nown:"Доброволець із команди",ndue:"до наступного воркшопу"},
+    {was:"—",own:"",due:"",flag:"Дії не було, хоча 4 з 6 мінусів — про час і оцінку",
+     now:"Перед оцінкою обрати еталонну задачу на 3 SP. На кожну історію — таймбокс 3 хв і не більше двох раундів голосування.",nown:"Developers",ndue:"на наступному плануванні"}
+  ],
+  wishes:[
+    [1,"🌱","Сміливість пробувати","Ти прийшов(-ла) у новий формат і не відсидівся(-лась) у тіні. Бажаю зберегти цю легкість перших кроків: найкращі ПМи — ті, хто не боїться бути новачком знову і знову."],
+    [2,"🧭","Той, на кого спираються","Навпроти твого номера найбільше подяк на стіні. Бажаю, щоб уміння пояснювати залишалося з тобою завжди — і щоб поруч були люди, які так само підтримають тебе."],
+    [3,"🔍","Уважність до деталей","Тебе відзначали не раз — це помічають тих, хто вникає. Бажаю проєктів, де твоя ретельність рятує реліз, і команд, які це цінують уголос."],
+    [4,"🎲","Влучні оцінки","Оцінювати складно всім, і з кожним спринтом це стає легше. Бажаю, щоб твої story points дедалі частіше збігалися з реальністю, а сумніви перетворювалися на добрі запитання."],
+    [5,"🤝","Командний гравець","«Класна командна робота» — це і про тебе. Бажаю завжди знаходити команду, де хочеться лишатися після дзвінка, і самому(-ій) бути причиною, чому вона така."],
+    [6,"🚀","Розгін","Першого разу часу завжди замало. Бажаю, щоб наступний воркшоп здався вдвічі легшим, а через рік ти з усмішкою згадував(-ла), як усе починалося."]
+  ]
+},
+2:{
+  name:"Команда 2", title:"Генератори ідей", img:"assets/team2.jpg",
+  sum:"Жива, говірка, проактивна команда. Плюси — про комунікацію та спільні рішення. Мінуси — зворотний бік того самого: довгі обговорення, перебивання, втручання в роль Scrum Master.",
+  tags:["активна комунікація","проактивність","багато ідей","довгі обговорення"],
+  verdict:"<b>Головний висновок.</b> Енергії вистачає, бракує рамки. Показова суперечність: у плюсах «швидко узгоджували рішення», в ідеях — «швидше приймати рішення». Тобто рішення приймалися швидко, коли до них доходило, але шлях до них був задовгий.",
+  good:[["Комунікація","Активна комунікація"],["Команда","гарна командна робота"],["Команда","Проактивність 🚀"],["Команда","злагоджена команда"],["Рішення","Спільні рішення"],["Рішення","швидко узгоджували рішення"],["Навички","навичка користування Jira"],["Ідеї","Багато цікавих різних ідей"]],
+  bad:[["Обговорення","Організація обговорення (час + не перебивати один одного)"],["Час","Брак часу"],["Ролі","Підготувати інструкцію на кожну роль, щоб кожен чітко розумів свої обов'язки та можливості"],["Ролі","влізали в роботу С.М."],["Обговорення","Довгі обговорення","👍"],["Обговорення","довго обговорювали «вступну частину»"]],
+  idea:[["","більше фокусу на завданні, а не вигадуванні проєкту","👍"],["","більше фокусуватися на своїх ролях","👍"],["","Швидше приймати рішення","👍"],["","Краще обговорювати самарі (до чого ми прийшли і чи всі розуміють, що відбувається)"],["","Краща комунікація (відповідати по черзі)"]],
+  bars:[["Обговорення і час",6,"bad"],["Команда і комунікація",4,"good"],["Ролі",3,"bad"],["Рішення",3,"good"],["Фокус на завданні",2,"idea"],["Навички та ідеї",2,"good"]],
+  kudos:[],
+  kudosN:[["Учасник 2",5],["Учасник 3",2],["Учасник 1",1],["Учасник 5",1],["Учасник 6",1]],
+  kudosMeta:"10 карток, усі без тексту. Наступного разу варто дописати, за що саме дякуємо: конкретна подяка працює вдесятеро сильніше.",
+  acts:[
+    {was:"Створити інструкцію для активної роботи команди.",own:"Scrum Master",due:"На подальші сесії",flag:"Розмите формулювання і дата",
+     now:"За 10 хв на початку наступної сесії разом скласти 5 робочих угод: говоримо по черзі, одна тема за раз, таймер на видноті, «паркуємо» побічне, підсумок уголос наприкінці кожного блоку.",nown:"Уся команда, фасилітує SM",ndue:"перші 10 хв наступної сесії"},
+    {was:"Підготувати інструкцію по ролях.",own:"Scrum Master",due:"Наступний воркшоп",flag:"Одна людина пише правила для всіх",
+     now:"Кожен пише картку власної ролі на пів сторінки: за що відповідаю, що вирішую сам, чого не роблю. Картки звіряються зі Scrum Guide і зачитуються на старті.",nown:"Кожен учасник за свою роль",ndue:"до наступного воркшопу"},
+    {was:"Створити адженду зустрічі та розбивку по часу.",own:"Адміністратор курсу",due:"Наступний воркшоп",flag:"Власник поза командою",
+     now:"Команда сама розбиває відведений час на блоки з таймбоксами (приклад — нижче в розділі «Методи»). Таймкіпер стежить за таймером. У адміністратора просимо лише загальну тривалість і завдання заздалегідь.",nown:"Scrum Master + таймкіпер",ndue:"перші 5 хв воркшопу"}
+  ],
+  wishes:[
+    [1,"💡","Джерело ідей","«Багато цікавих різних ідей» — без таких людей продукти не народжуються. Бажаю, щоб твої ідеї завжди знаходили свій беклог, а найсміливіша з них одного дня стала реальним продуктом."],
+    [2,"🎯","Центр тяжіння","Навпроти твого номера найбільше подяк. Бажаю зберегти вміння збирати людей навколо справи — і щоб довіра команди завжди була заслуженою та взаємною."],
+    [3,"🗣️","Голос команди","Активна комунікація — рідкісний дар. Бажаю, щоб тебе завжди чули з першого разу, а твої запитання відкривали те, чого інші не помітили."],
+    [5,"⚡","Проактивність","Ти з тих, хто не чекає, поки попросять. Бажаю проєктів, гідних цієї енергії, і мудрості обирати, куди її вкладати."],
+    [6,"🧩","Майстер згоди","Спільні рішення не трапляються самі — хтось допомагає команді домовитися. Бажаю, щоб це вміння вело тебе до ролей, де воно найпотрібніше, і щоб кожне твоє «домовилися» було надійним."]
+  ]
+}};
+
+const ADVICE=[
+ {s:"scrum",t:"both",h:"Планування має три питання, а не одне",seen:"«Було складно зрозуміти план дій» (К1), «довго обговорювали вступну частину» (К2).",says:"Sprint Planning відповідає на три теми: навіщо цей спринт цінний (Sprint Goal), що можна зробити, як саме виконати роботу.",todo:"Написати ці три питання на дошці й іти по них послідовно. На «Навіщо» — не більше 10 хв, результат — одне речення Sprint Goal."},
+ {s:"scrum",t:"1",h:"Оцінку готують до планування",seen:"«Багато часу на оцінку», «складно відразу оцінювати складність задач».",says:"Уточнення Product Backlog (refinement) — безперервна діяльність: елементи розбивають і деталізують заздалегідь. За розмір відповідають Developers.",todo:"Наступного разу перегляньте беклог за день до воркшопу: розбийте великі історії, додайте критерії приймання. На самому плануванні лишиться тільки голосування."},
+ {s:"scrum",t:"2",h:"Scrum Master — не секретар і не начальник",seen:"«Влізали в роботу С.М.», дві з трьох дій записано на Scrum Master.",says:"Scrum Master відповідає за ефективність Scrum Team: навчає самоорганізації, дбає, щоб події були продуктивними й вкладалися в таймбокс. Developers і Product Owner мають власні зони відповідальності.",todo:"Домовтеся: фасилітує і стежить за часом SM, порядок беклогу визначає PO, обсяг і оцінку — Developers. Якщо хочеться втрутитися — скажіть «пропоную», а не робіть за іншого."},
+ {s:"scrum",t:"2",h:"Цінності Scrum — це практика, а не плакат",seen:"«Не перебивати один одного», «відповідати по черзі», «більше фокусу на завданні».",says:"П'ять цінностей: Commitment, Focus, Openness, Respect, Courage. Коли команда їх утілює, оживають прозорість, інспекція та адаптація.",todo:"Focus → одна тема за раз і «парковка» для побічного. Respect → говоримо по колу, кожен має свою хвилину. Перевірте це в робочих угодах."},
+ {s:"scrum",t:"both",h:"Покращення — справа самої команди",seen:"Із п'яти дій три записано на адміністратора курсу, дві — на Scrum Master.",says:"Scrum Team самокерована: сама вирішує, хто, що, коли і як робить. На ретроспективі команда визначає найкорисніші зміни й береться за них якнайшвидше.",todo:"Правило: щонайменше одна дія з ретро належить команді й вміщується в наступну сесію. Прохання до зовнішніх людей — окремий список «запити», а не Actions."},
+ {s:"scrum",t:"1",h:"Planning Poker у Scrum Guide немає — і це нормально",seen:"«Знайомство з PP», «новий досвід у Planning Poker».",says:"Scrum Guide описує лише каркас. Конкретні техніки оцінювання команда обирає сама як доповнювальні практики.",todo:"Не сприймайте story points як обов'язкову частину Scrum. Якщо покер затягується — спробуйте розміри футболок або метод «сортування за афінністю»."},
+ {s:"pmbok",t:"both",h:"Домен Schedule: керуйте часом свідомо",seen:"«Брак часу», «хотілося б більше часу», «довгі обговорення».",says:"Домен діяльності Schedule у PMBOK 8 охоплює планування і контроль строків. В адаптивних підходах базовий інструмент — таймбокс: фіксований час, змінний обсяг.",todo:"Розбийте воркшоп на блоки з таймером на видноті. Коли час блоку вийшов — фіксуєте, що маєте, і рухаєтеся далі. Обсяг підлаштовується під час, а не навпаки."},
+ {s:"pmbok",t:"2",h:"Принцип Focus on value: спершу цінність",seen:"«Більше фокусу на завданні, а не вигадуванні проєкту».",says:"Один із шести принципів PMBOK 8 — зосереджуватися на цінності. Домен Scope застерігає від роботи понад узгоджений обсяг (gold plating).",todo:"На старті одним реченням запишіть, що є результатом воркшопу (наприклад: «спланований спринт у Jira»). Перед кожною новою ідеєю питайте: це наближає нас до цього результату?"},
+ {s:"pmbok",t:"2",h:"Домен Resources: ролі мають бути записані",seen:"«Інструкція на кожну роль, щоб кожен розумів свої обов'язки та можливості».",says:"Домен Resources охоплює команду: ролі, відповідальність, повноваження. Типові інструменти — статут команди (team charter) і матриця RACI.",todo:"Складіть статут команди на одну сторінку: ролі, хто що вирішує, як приймаємо рішення, як говоримо. Це і є «інструкція», яку ви просили, — тільки написана вами."},
+ {s:"pmbok",t:"both",h:"Принципи Be an accountable leader і Build an empowered culture",seen:"Власники дій — переважно поза командою.",says:"PMBOK 8 очікує, що лідерство й відповідальність розподілені в команді, а культура дає людям повноваження діяти.",todo:"Кожну дію ретро починайте зі слова «ми» або з імені учасника. Якщо без зовнішньої людини ніяк — призначте того, хто з нею домовиться."},
+ {s:"pmbok",t:"1",h:"Домен Risk: невідоме завдання — це ризик",seen:"«До воркшопу знати завдання», «спробувати Jira до воркшопу», «без AI зробити дуже важко».",says:"Домен Risk — про роботу з невизначеністю: виявити її заздалегідь і зменшити вплив. Домен Stakeholders — про узгодження очікувань із зацікавленими сторонами.",todo:"Запитайте в організатора завдання та інструменти за кілька днів. Зробіть 20-хвилинну «розвідку»: створіть тестову задачу в Jira, спробуйте один раунд покеру."},
+ {s:"pmbok",t:"1",h:"ШІ як інструмент, а не милиця",seen:"«Без AI зробити дуже важко», дія «надати інструкцію для ШІ».",says:"PMBOK 8 розглядає штучний інтелект як інструмент проєктного менеджера, за результат роботи якого відповідає людина.",todo:"Використовуйте ШІ для чернеток: розбити епік на історії, запропонувати критерії приймання. Оцінку й рішення лишайте команді — саме обговорення розбіжностей і є цінністю покеру."},
+ {s:"pmbok",t:"both",h:"Принцип Embed quality: ретро як вбудована якість",seen:"Обидві команди чесно назвали проблеми й запропонували ідеї.",says:"Якість вбудовується в процес, а не перевіряється наприкінці. Ретроспектива — механізм постійного покращення процесу.",todo:"Почніть наступну сесію з двох хвилин: що ми обіцяли минулого разу і чи зробили. Без цього кроку ретро перетворюється на ритуал."}
+];
+
+const METHODS=[
+ ["⏲️","Таймбокс + таймкіпер","Кожен блок має час і людину з таймером. Час вийшов — фіксуємо й ідемо далі."],
+ ["🎯","Еталонна задача","Оберіть одну зрозумілу історію і домовтеся, що це 3 SP. Усе інше оцінюйте відносно неї: більше чи менше."],
+ ["🃏","Покер за правилами","Картки відкривають одночасно. Говорять лише найвища й найнижча оцінки, по хвилині. Максимум два раунди, далі — беремо більшу."],
+ ["🅿️","Парковка","Побічна тема чи класна ідея не за завданням — на окремий стікер. Повертаємося, якщо лишиться час."],
+ ["🎤","Коло й токен","Говорить той, у кого «мікрофон» (будь-який предмет або порядок у списку). Знімає проблему перебивання без образ."],
+ ["✊","Fist of Five","Швидке рішення: всі одночасно показують від 0 до 5 пальців. Усі 3+ — рішення прийнято, є 0–2 — слухаємо лише цих людей."],
+ ["📝","Підсумок уголос","Наприкінці кожного блоку одна людина за 30 секунд каже: що вирішили, хто що робить. Інші підтверджують."],
+ ["🪪","Картки ролей","Пів сторінки на роль: відповідаю за…, вирішую сам…, не роблю… Тримайте перед очима під час сесії."],
+ ["✅","Definition of Ready","Історію беремо в оцінку, лише якщо є: зрозумілий опис, критерії приймання, вона вміщується в спринт."]
+];
+
+const AGENDA=[["Навіщо: ціль спринту",10,"#2f7fd6"],["Що: відбір історій",15,"#0b8a7e"],["Оцінка: покер",20,"#c98a12"],["Як: декомпозиція",10,"#7a55d6"],["Підсумок і ризики",5,"#d4502a"]];
+
+const $=s=>document.querySelector(s), el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e};
+const COLOR={good:"var(--good)",bad:"var(--bad)",idea:"var(--idea)"};
+let team=1, filter="all";
+
+function notes(arr,k){return arr.map((n,i)=>`<div class="note ${k}" style="--rot:${((i*37)%5-2)*.7}deg">${n[0]?`<em>${n[0]}</em>`:""}${n[1]}${n[2]?`<span class="vote">${n[2]}</span>`:""}</div>`).join("")}
+
+function renderTeam(){
+  const d=T[team];
+  const p=$("#portraitBox");
+  p.innerHTML=`<figure class="pic swap"><img src="${d.img}" alt="Ілюстрація: ${d.name} — ${d.title}" onerror="this.replaceWith(fallback(${team}))"><figcaption>${d.name} очима ChatGPT</figcaption></figure>
+   <div class="swap"><p class="kicker">${d.name}</p><h2 style="margin:8px 0 12px">${d.title}</h2><p class="lead">${d.sum}</p>
+   <div class="tags">${d.tags.map(t=>`<span class="tag">${t}</span>`).join("")}</div><p class="verdict">${d.verdict}</p></div>`;
+  $("#boardBox").innerHTML=`
+   <div class="col swap"><h3>😌 Що було добре <small>${d.good.length}</small></h3><div class="notes">${notes(d.good,"g")}</div></div>
+   <div class="col swap"><h3>😑 Що могло бути краще <small>${d.bad.length}</small></h3><div class="notes">${notes(d.bad,"b")}</div></div>
+   <div class="col swap"><h3>💡 Ідеї <small>${d.idea.length}</small></h3><div class="notes">${notes(d.idea,"i")}</div></div>`;
+  const max=Math.max(...d.bars.map(b=>b[1]));
+  $("#barsBox").innerHTML=d.bars.map(b=>`<div class="bar"><span>${b[0]}</span><div class="track"><div class="fill" data-w="${b[1]/max*100}" style="background:${COLOR[b[2]]}"></div></div><b>${b[1]}</b></div>`).join("");
+  requestAnimationFrame(()=>requestAnimationFrame(()=>document.querySelectorAll("#barsBox .fill").forEach(f=>f.style.width=f.dataset.w+"%")));
+  $("#kudosMeta").textContent=d.kudosMeta;
+  $("#kudosBox").innerHTML=d.kudos.map(k=>`<button class="kd txt">💜 ${k}</button>`).join("")+d.kudosN.map(k=>`<button class="kd">👏 ${label(k[0])} × ${k[1]}</button>`).join("");
+  $("#auditBox").innerHTML=d.acts.map(a=>`<div class="act swap"><div class="was"><small>Як записали</small>${a.was}${a.own?`<p class="meta">${a.own} · ${a.due}</p>`:""}<span class="flag">⚠ ${a.flag}</span></div><div class="arrow" aria-hidden="true">→</div><div class="now"><small>Як краще</small>${a.now}<p class="meta"><b>${a.nown}</b> · ${a.ndue}</p></div></div>`).join("");
+  $("#wishBox").innerHTML=d.wishes.map(w=>`<button class="flip swap" aria-label="Побажання: ${who(w[0])}"><div class="in3"><div class="face front"><span class="emo">${w[1]}</span><div><b>${who(w[0])}</b><br><span>${w[2]} · натисніть</span></div></div><div class="face back"><b>${who(w[0])}, це тобі</b><p>${w[3]}</p></div></div></button>`).join("");
+  renderAdvice();
+}
+function who(n){return NAMES[team][n]||("Учасник "+n)}
+function label(s){const n=+s.replace(/\D/g,"");return who(n)}
+function fallback(t){
+  const c=t==1?"var(--t1)":"var(--t2)";
+  const w=el("div");w.style.cssText="width:100%;height:100%;display:grid;place-items:center";
+  w.innerHTML=`<svg viewBox="0 0 300 200" role="img" aria-label="Команда за столом"><rect width="300" height="200" fill="none"/><ellipse cx="150" cy="130" rx="95" ry="26" fill="${c}" opacity=".25"/>${[60,105,150,195,240].map((x,i)=>`<g><circle cx="${x}" cy="${88-(i%2)*10}" r="13" fill="${c}"/><rect x="${x-14}" y="${104-(i%2)*10}" width="28" height="30" rx="12" fill="${c}" opacity=".7"/></g>`).join("")}${[95,125,155,185].map((x,i)=>`<rect x="${x}" y="122" width="18" height="24" rx="3" fill="#fff" stroke="${c}" transform="rotate(${i*8-12} ${x+9} 134)"/>`).join("")}</svg>`;
+  return w;
+}
+function renderAdvice(){
+  const list=[...ADVICE].sort((a,b)=>rank(a)-rank(b));
+  $("#adviceBox").innerHTML=list.map(a=>`<article class="adv ${filter!="all"&&a.s!=filter?"hide":""}"><button aria-expanded="false"><div><span class="src ${a.s}">${a.s=="scrum"?"Scrum Guide":"PMBOK 8"}</span><h3>${a.h}</h3><p class="who">${a.t=="both"?"Обидві команди":"Команда "+a.t}</p></div><span class="plus">+</span></button><div class="body"><div><dl><div><dt>Що побачили</dt><dd>${a.seen}</dd></div><div><dt>Що каже джерело</dt><dd>${a.says}</dd></div><div><dt>Що зробити</dt><dd>${a.todo}</dd></div></dl></div></div></article>`).join("");
+}
+function rank(a){return a.t==team?0:a.t=="both"?1:2}
+
+document.querySelectorAll(".seg button").forEach(b=>b.onclick=()=>{
+  team=+b.dataset.team;document.body.dataset.team=team;
+  document.querySelectorAll(".seg button").forEach(x=>x.setAttribute("aria-pressed",x==b));
+  renderTeam();
+});
+$("#chips").onclick=e=>{const c=e.target.closest(".chip");if(!c)return;filter=c.dataset.f;
+  document.querySelectorAll(".chip").forEach(x=>x.setAttribute("aria-pressed",x==c));renderAdvice()};
+$("#adviceBox").onclick=e=>{const a=e.target.closest(".adv");if(!a)return;const o=a.classList.toggle("open");a.querySelector("button").setAttribute("aria-expanded",o)};
+$("#wishBox").onclick=e=>{const f=e.target.closest(".flip");if(f)f.classList.toggle("on")};
+$("#kudosBox").onclick=e=>{const k=e.target.closest(".kd");if(!k)return;
+  for(let i=0;i<8;i++){const p=el("span","pop",["👏","💜","✨","🎉"][i%4]);p.style.left=e.clientX+"px";p.style.top=e.clientY+"px";
+    p.style.setProperty("--dx",(Math.random()*160-80)+"px");p.style.setProperty("--dy",(-60-Math.random()*90)+"px");p.style.setProperty("--dr",(Math.random()*120-60)+"deg");
+    document.body.append(p);setTimeout(()=>p.remove(),900)}};
+
+$("#methodsBox").innerHTML=METHODS.map(m=>`<div class="m"><span class="ico">${m[0]}</span><h3>${m[1]}</h3><p>${m[2]}</p></div>`).join("");
+$("#agenda").innerHTML=AGENDA.map((a,i)=>`<div style="flex:${a[1]};background:${a[2]};transition-delay:${i*120}ms">${a[1]} хв</div>`).join("");
+$("#legend").innerHTML=AGENDA.map(a=>`<span><i style="background:${a[2]}"></i>${a[0]} — ${a[1]} хв</span>`).join("");
+
+renderTeam();
+
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;e.target.classList.add("in");
+  e.target.querySelectorAll("[data-count]").forEach(count);io.unobserve(e.target)}),{threshold:.12});
+document.querySelectorAll(".rv,.stats").forEach(n=>io.observe(n));
+function count(n){const to=+n.dataset.count,t0=performance.now();
+  (function step(t){const k=Math.min(1,(t-t0)/900);n.textContent=Math.round(to*(1-Math.pow(1-k,3)));if(k<1)requestAnimationFrame(step)})(t0)}
+</script>
+</body>
+</html>
